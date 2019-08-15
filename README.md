@@ -8,4 +8,8 @@
 
 * CreateDFMs.R: R code used to create document feature matrices (DFM) for each subreddit
 
+* DataClean.ipynb: Jupyter notebook with Pythod code for initial text data cleaning 
+
 * Figures.R: R code for producing figures presented in paper 
+
+* QueryData.ipynb: Jupyter notebook with Python code used to obtain comment data from Google BigQuery
