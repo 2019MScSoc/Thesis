@@ -26,7 +26,7 @@ us_uk <- function(data) {
   
 }
 
-# function for created Document Feature Matrices
+# function for creating Document Feature Matrices
 create_dfm <- function(data, class) {
   data <- data[!duplicated(data$id),]
   data$class <- class

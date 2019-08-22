@@ -20,7 +20,7 @@ select_random_comments <- function(data, feature, dfm, seed) {
   return(weighted_sample)
 }
 
-load('./ProcessedData/RDataAug12_a.RData')
+load('./ProcessedData/RDataAug12_full.RData')
 load('./ProcessedData/RDataAug12_trimmed.RData')
 
 ################################################################################
@@ -34,6 +34,39 @@ docvars(full_dfm, 'class') <- c(rep('liberal', ndoc(liberal_dfm)),
                                 rep('guns', ndoc(guns_dfm)))
 grouped <- dfm_group(full_dfm, groups = 'class')
 textstat_simil(grouped, method = 'cosine')
+
+# fw 1: /r/progun vs /r/liberalgunowners
+comp1 <- rbind(progun_dfm, liberal_dfm)
+docvars(comp1, 'class') <- c(rep('progun', ndoc(progun_dfm)), 
+                             rep('liberal', ndoc(liberal_dfm)))
+comp1_dtm <- convert_quanteda_to_slam(comp1)
+doc_covariates1 <- data.frame(sub = docvars(comp1, 'class'))
+cont_table1 <- contingency_table(metadata = doc_covariates1,
+                                 document_term_matrix = comp1_dtm)
+fw1 <- feature_selection(cont_table1, alpha = mean(ntoken(comp1)), 
+                         method = 'informed Dirichlet')
+
+# fw: /r/guns vs. /r/liberalgunowners 
+comp2 <- rbind(guns_dfm, liberal_dfm)
+docvars(comp2, 'class') <- c(rep('guns', ndoc(guns_dfm)),
+                             rep('liberal', ndoc(liberal_dfm)))
+comp2_dtm <- convert_quanteda_to_slam(comp2)
+doc_covariates2 <- data.frame(sub = docvars(comp2, 'class'))
+cont_table2 <- contingency_table(metadata = doc_covariates2,
+                                 document_term_matrix = comp2_dtm)
+fw2 <- feature_selection(cont_table2, alpha = mean(ntoken(comp2)),
+                         method = 'informed Dirichlet')
+
+# fw: /r/guns vs. /r/progun
+comp3 <- rbind(guns_dfm, progun_dfm)
+docvars(comp3, 'class') <- c(rep('guns', ndoc(guns_dfm)),
+                             rep('progun', ndoc(progun_dfm)))
+comp3_dtm <- convert_quanteda_to_slam(comp3)
+doc_covariates3 <- data.frame(sub = docvars(comp3, 'class'))
+cont_table3 <- contingency_table(metadata = doc_covariates3,
+                                 document_term_matrix = comp3_dtm)
+fw3 <- feature_selection(cont_table3, alpha = mean(ntoken(comp3)),
+                         method = 'informed Dirichlet')
 
 ################################################################################
 ############### Analysis After Removing Comments Based on Length ###############
